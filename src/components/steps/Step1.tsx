@@ -1,4 +1,4 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import dayjs from "dayjs";
@@ -12,29 +12,30 @@ type FormValues = {
 
 const todayMinus18 = dayjs().subtract(18, "year");
 
-const schema = yup.object().shape({
-  fullName: yup
-    .string()
-    .required("Full name is required")
-    .min(3, "At least 3 characters"),
-  email: yup
-    .string()
-    .email("Invalid email")
-    .when("phone", {
-      is: (val: string | undefined) => !val || val.length === 0,
-      then: (schema) => schema.required("Email or phone is required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-  phone: yup.string().when("email", {
-    is: (val: string | undefined) => !val || val.length === 0,
-    then: (schema) => schema.required("Phone or email is required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  birthday: yup
-    .date()
-    .required("Birthday is required")
-    .max(todayMinus18.toDate(), "Must be at least 18 years old"),
-});
+const schema: yup.SchemaOf<FormValues> = yup
+  .object({
+    fullName: yup
+      .string()
+      .required("Full name is required")
+      .min(3, "At least 3 characters"),
+    email: yup.string().email("Invalid email").notRequired(),
+    phone: yup.string().notRequired(),
+    birthday: yup
+      .string()
+      .required("Birthday is required")
+      .test("age-check", "Must be at least 18 years old", (value) => {
+        return value ? dayjs(value).isBefore(todayMinus18) : false;
+      }),
+  })
+  .test(
+    "email-or-phone",
+    "Either email or phone is required",
+    function (value) {
+      if (!value) return false;
+      const { email, phone } = value;
+      return !!(email || phone);
+    }
+  );
 
 export default function Step1() {
   const {
@@ -47,7 +48,7 @@ export default function Step1() {
 
   const onSubmit = (data: FormValues) => {
     console.log("Step1 data", data);
-    // TODO: ذخیره در گلوبال استیت (Zustand یا Context)
+    // TODO: ذخیره در گلوبال استیت
   };
 
   return (
@@ -57,7 +58,7 @@ export default function Step1() {
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
-        width: "300px",
+        width: "320px",
       }}
     >
       <div>
@@ -83,6 +84,10 @@ export default function Step1() {
         <input type="date" {...register("birthday")} />
         <p style={{ color: "red" }}>{errors.birthday?.message}</p>
       </div>
+
+      {errors?.["email-or-phone"] && (
+        <p style={{ color: "red" }}>{errors?.["email-or-phone"]?.message}</p>
+      )}
 
       <button type="submit">Next</button>
     </form>
