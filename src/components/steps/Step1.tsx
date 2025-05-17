@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import dayjs from "dayjs";
+import { useFormStore } from "../../store/formStore";
 
 type FormValues = {
   fullName: string;
@@ -46,9 +47,10 @@ export default function Step1() {
     resolver: yupResolver(schema),
   });
 
+  const { setFormData } = useFormStore();
+
   const onSubmit = (data: FormValues) => {
-    console.log("Step1 data", data);
-    // TODO: ذخیره در گلوبال استیت
+    setFormData(data);
   };
 
   return (
