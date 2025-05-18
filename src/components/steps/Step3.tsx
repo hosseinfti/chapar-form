@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { useFormStore } from "../../store/formStore";
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 
 interface Step3Props {
@@ -28,7 +36,6 @@ export default function Step3({ onBack }: Step3Props) {
         "https://task.chapar.co/api/volunteers",
         payload
       );
-      console.log("✅ Server response:", response.data);
       setSuccess(true);
       clearForm();
     } catch (err: any) {
@@ -40,7 +47,6 @@ export default function Step3({ onBack }: Step3Props) {
               `${field}: ${(messages as string[]).join(", ")}`
           )
           .join("\n");
-
         setError(flatMessage);
       } else {
         setError("An unexpected error occurred");
@@ -52,43 +58,100 @@ export default function Step3({ onBack }: Step3Props) {
 
   if (success) {
     return (
-      <p style={{ color: "green" }}>
-        ✅ Your information has been submitted successfully!
-      </p>
+      <Alert severity="success">
+        ✅ Your information was submitted successfully!
+      </Alert>
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <h3>Review Your Information</h3>
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Review Your Info
+      </Typography>
 
-      <div>
-        <strong>Full Name:</strong> {data.fullName}
-      </div>
-      <div>
-        <strong>Email:</strong> {data.email || "—"}
-      </div>
-      <div>
-        <strong>Phone:</strong> {data.phone || "—"}
-      </div>
-      <div>
-        <strong>Birthday:</strong> {data.birthday}
-      </div>
-      <div>
-        <strong>Skills:</strong>{" "}
-        {data.skills && data.skills.length > 0 ? data.skills.join(", ") : "—"}
-      </div>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography variant="subtitle2">Full Name</Typography>
+          <Typography variant="body1" color="text.secondary">
+            {data.fullName}
+          </Typography>
+        </Grid>
 
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography variant="subtitle2">Email</Typography>
+          <Typography variant="body1" color="text.secondary">
+            {data.email || "—"}
+          </Typography>
+        </Grid>
 
-      <div style={{ display: "flex", gap: "1rem" }}>
-        <button onClick={onBack} disabled={loading}>
-          Back
-        </button>
-        <button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Submitting..." : "Submit"}
-        </button>
-      </div>
-    </div>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography variant="subtitle2">Phone</Typography>
+          <Typography variant="body1" color="text.secondary">
+            {data.phone || "—"}
+          </Typography>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography variant="subtitle2">Birthday</Typography>
+          <Typography variant="body1" color="text.secondary">
+            {data.birthday}
+          </Typography>
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="subtitle2">Skills</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              flexWrap: "wrap",
+              maxHeight: 45,
+              overflowY: "auto",
+              p: 1,
+              border: "1px solid #ddd",
+              borderRadius: 1,
+              bgcolor: "#f9f9f9",
+            }}
+          >
+            <Typography variant="body1" color="text.secondary">
+              {data.skills && data.skills.length > 0
+                ? data.skills.join(", ")
+                : "—"}
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <Grid container justifyContent="flex-end" spacing={2} sx={{ mt: 3 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Button
+            variant="outlined"
+            sx={{ width: "100%", height: "4em" }}
+            onClick={onBack}
+            disabled={loading}
+          >
+            Back
+          </Button>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Button
+            sx={{ width: "100%", height: "4em" }}
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            startIcon={loading && <CircularProgress size={16} />}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }

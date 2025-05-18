@@ -3,19 +3,41 @@ import Step1 from "../components/steps/Step1";
 import Step2 from "../components/steps/Step2";
 import Step3 from "../components/steps/Step3";
 
-export default function MultiStepForm() {
-  const [step, setStep] = useState(1);
+import { Stepper, Step, StepLabel, Box, Paper, Container } from "@mui/material";
 
-  const next = () => setStep((s) => s + 1);
-  const prev = () => setStep((s) => s - 1);
+const steps = ["Personal Info", "Skills", "Review & Submit"];
+
+export default function MultiStepForm() {
+  const [step, setStep] = useState(0);
+
+  const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
+  const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Step {step}</h2>
-
-      {step === 1 && <Step1 onNext={next} />}
-      {step === 2 && <Step2 onNext={next} onBack={prev} />}
-      {step === 3 && <Step3 onBack={prev} />}
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          minHeight: 500,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <Stepper activeStep={step} alternativeLabel sx={{ mb: 4, flex: 1 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Box sx={{ height: "100%", flex: 4, justifyContent: "space-between" }}>
+          {step === 0 && <Step1 onNext={next} />}
+          {step === 1 && <Step2 onNext={next} onBack={prev} />}
+          {step === 2 && <Step3 onBack={prev} />}
+        </Box>
+      </Paper>
+    </Container>
   );
 }

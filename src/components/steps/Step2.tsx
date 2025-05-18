@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useFormStore } from "../../store/formStore";
+import { Box, Grid, TextField, Button, Chip } from "@mui/material";
 
-interface IComponentProps {
+interface Step2Props {
   onNext: () => void;
   onBack: () => void;
 }
-export default function Step2({ onBack, onNext }: IComponentProps) {
+
+export default function Step2({ onNext, onBack }: Step2Props) {
   const { data, setFormData } = useFormStore();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
@@ -15,6 +17,7 @@ export default function Step2({ onBack, onNext }: IComponentProps) {
   const addSkill = () => {
     const trimmed = input.trim();
     if (!trimmed) return;
+
     if (skills.includes(trimmed)) {
       setError("Skill already added");
       return;
@@ -40,40 +43,76 @@ export default function Step2({ onBack, onNext }: IComponentProps) {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        width: "320px",
-      }}
+    <Box
+      sx={{ height: "100%" }}
+      component="form"
+      noValidate
+      onSubmit={(e) => e.preventDefault()}
     >
-      <label>Add a Skill</label>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && addSkill()}
-        placeholder="Type a skill and press Add"
-      />
-      <button type="button" onClick={addSkill}>
-        Add
-      </button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <Grid sx={{ height: "100%" }} container spacing={3}>
+        <Grid sx={{ height: "100%" }} size={12}>
+          <TextField
+            label="Add a Skill"
+            fullWidth
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addSkill()}
+            error={!!error}
+            helperText={error}
+          />
+        </Grid>
 
-      <ul>
-        {skills.map((skill, index) => (
-          <li
-            key={index}
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <span>{skill}</span>
-            <button onClick={() => removeSkill(skill)}>❌</button>
-          </li>
-        ))}
-      </ul>
+        {skills.length > 0 && (
+          <Grid size={12}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                flexWrap: "wrap",
+                maxHeight: 150,
+                overflowY: "auto",
+                p: 1,
+                border: "1px solid #ddd",
+                borderRadius: 1,
+                bgcolor: "#f9f9f9",
+              }}
+            >
+              {skills.map((skill, index) => (
+                <Chip
+                  key={index}
+                  label={skill}
+                  onDelete={() => removeSkill(skill)}
+                  color="primary"
+                />
+              ))}
+            </Box>
+          </Grid>
+        )}
 
-      <button onClick={onBack}>Back</button>
-      <button onClick={handleNext}>Next</button>
-    </div>
+        <Grid size={12}>
+          <Grid container spacing={3}>
+            <Grid size={6}>
+              <Button
+                sx={{ width: "100%", height: "4em" }}
+                variant="outlined"
+                onClick={onBack}
+              >
+                Back
+              </Button>
+            </Grid>
+            <Grid size={6}>
+              <Button
+                sx={{ width: "100%", height: "4em" }}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+              >
+                Next
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
