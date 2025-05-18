@@ -26,3 +26,10 @@ A multi-step form built with React, Zustand, and Material UI as part of the fron
 - Fixed footer action buttons (Next/Back)
 
 ---
+
+## Running the Project
+
+- npm install
+- npm run dev
+
+---
