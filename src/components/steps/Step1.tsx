@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -13,7 +14,7 @@ type FormValues = {
 
 const todayMinus18 = dayjs().subtract(18, "year");
 
-const schema: yup.SchemaOf<FormValues> = yup
+const schema: yup.ObjectSchema<FormValues> = yup
   .object({
     fullName: yup
       .string()
@@ -24,9 +25,9 @@ const schema: yup.SchemaOf<FormValues> = yup
     birthday: yup
       .string()
       .required("Birthday is required")
-      .test("age-check", "Must be at least 18 years old", (value) => {
-        return value ? dayjs(value).isBefore(todayMinus18) : false;
-      }),
+      .test("age-check", "Must be at least 18 years old", (value) =>
+        value ? dayjs(value).isBefore(todayMinus18) : false
+      ),
   })
   .test(
     "email-or-phone",
@@ -34,23 +35,48 @@ const schema: yup.SchemaOf<FormValues> = yup
     function (value) {
       if (!value) return false;
       const { email, phone } = value;
-      return !!(email || phone);
+      if (email || phone) return true;
+      return this.createError({
+        path: "root",
+        message: "Either email or phone is required",
+      });
     }
   );
 
-export default function Step1() {
+interface Step1Props {
+  onNext: () => void;
+}
+
+export default function Step1({ onNext }: Step1Props) {
+  const { data, setFormData } = useFormStore();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      birthday: "",
+    },
   });
 
-  const { setFormData } = useFormStore();
+  useEffect(() => {
+    reset({
+      fullName: data.fullName || "",
+      email: data.email || "",
+      phone: data.phone || "",
+      birthday: data.birthday || "",
+    });
+  }, [reset, data]);
 
-  const onSubmit = (data: FormValues) => {
-    setFormData(data);
+  const onSubmit = (formData: FormValues) => {
+    setFormData(formData);
+    onNext();
   };
 
   return (
@@ -87,8 +113,8 @@ export default function Step1() {
         <p style={{ color: "red" }}>{errors.birthday?.message}</p>
       </div>
 
-      {errors?.["email-or-phone"] && (
-        <p style={{ color: "red" }}>{errors?.["email-or-phone"]?.message}</p>
+      {errors.root?.message && (
+        <p style={{ color: "red" }}>{errors.root.message}</p>
       )}
 
       <button type="submit">Next</button>

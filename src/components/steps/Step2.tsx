@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useFormStore } from "../../store/formStore";
 
-export default function Step2() {
+interface IComponentProps {
+  onNext: () => void;
+  onBack: () => void;
+}
+export default function Step2({ onBack, onNext }: IComponentProps) {
   const { data, setFormData } = useFormStore();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
@@ -32,6 +36,7 @@ export default function Step2() {
       setError("Please add at least one skill");
       return;
     }
+    onNext();
   };
 
   return (
@@ -67,6 +72,7 @@ export default function Step2() {
         ))}
       </ul>
 
+      <button onClick={onBack}>Back</button>
       <button onClick={handleNext}>Next</button>
     </div>
   );
