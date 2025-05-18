@@ -5,6 +5,8 @@ import * as yup from "yup";
 import dayjs from "dayjs";
 import { useFormStore } from "../../store/formStore";
 
+import { TextField, Grid, Button, Alert, FormHelperText } from "@mui/material";
+
 type FormValues = {
   fullName: string;
   email?: string;
@@ -80,44 +82,69 @@ export default function Step1({ onNext }: Step1Props) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        width: "320px",
-      }}
-    >
-      <div>
-        <label>Full Name</label>
-        <input {...register("fullName")} />
-        <p style={{ color: "red" }}>{errors.fullName?.message}</p>
-      </div>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Grid container spacing={3}>
+        <Grid size={12}>
+          <TextField
+            label="Full Name"
+            fullWidth
+            {...register("fullName")}
+            error={!!errors.fullName}
+            helperText={errors.fullName?.message}
+          />
+        </Grid>
 
-      <div>
-        <label>Email</label>
-        <input type="email" {...register("email")} />
-        <p style={{ color: "red" }}>{errors.email?.message}</p>
-      </div>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            label="Email"
+            type="email"
+            fullWidth
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+        </Grid>
 
-      <div>
-        <label>Phone</label>
-        <input type="tel" {...register("phone")} />
-        <p style={{ color: "red" }}>{errors.phone?.message}</p>
-      </div>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            label="Phone"
+            type="tel"
+            fullWidth
+            {...register("phone")}
+            error={!!errors.phone}
+            helperText={errors.phone?.message}
+          />
+        </Grid>
 
-      <div>
-        <label>Birthday</label>
-        <input type="date" {...register("birthday")} />
-        <p style={{ color: "red" }}>{errors.birthday?.message}</p>
-      </div>
+        <Grid size={12}>
+          <TextField
+            label="Birthday"
+            type="date"
+            fullWidth
+            {...register("birthday")}
+            InputLabelProps={{ shrink: true }}
+            error={!!errors.birthday}
+            helperText={errors.birthday?.message}
+          />
+        </Grid>
 
-      {errors.root?.message && (
-        <p style={{ color: "red" }}>{errors.root.message}</p>
-      )}
+        {errors.root?.message && (
+          <Grid size={12}>
+            <Alert severity="error">{errors.root.message}</Alert>
+          </Grid>
+        )}
 
-      <button type="submit">Next</button>
+        <Grid size={12}>
+          <Button
+            sx={{ width: "100%", height: "4em" }}
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            Next
+          </Button>
+        </Grid>
+      </Grid>
     </form>
   );
 }

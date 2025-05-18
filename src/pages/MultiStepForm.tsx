@@ -2,13 +2,15 @@ import { useState } from "react";
 import Step1 from "../components/steps/Step1";
 import Step2 from "../components/steps/Step2";
 import Step3 from "../components/steps/Step3";
+
 import {
-  Box,
+  Stepper,
   Step,
   StepLabel,
-  Stepper,
-  Typography,
+  Box,
   Paper,
+  Typography,
+  Container,
 } from "@mui/material";
 
 const steps = ["Personal Info", "Skills", "Review & Submit"];
@@ -20,24 +22,26 @@ export default function MultiStepForm() {
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 6, px: 3 }}>
-      <Stepper activeStep={step} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          {steps[step]}
+    <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Multi-Step Form
         </Typography>
 
-        {step === 0 && <Step1 onNext={next} />}
-        {step === 1 && <Step2 onNext={next} onBack={prev} />}
-        {step === 2 && <Step3 onBack={prev} />}
+        <Stepper activeStep={step} alternativeLabel sx={{ mb: 4 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+
+        <Box>
+          {step === 0 && <Step1 onNext={next} />}
+          {step === 1 && <Step2 onNext={next} onBack={prev} />}
+          {step === 2 && <Step3 onBack={prev} />}
+        </Box>
       </Paper>
-    </Box>
+    </Container>
   );
 }
