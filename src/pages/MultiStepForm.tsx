@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Step1 from "../components/steps/Step1";
 import Step2 from "../components/steps/Step2";
+import Step3 from "../components/steps/Step3";
 
 export default function MultiStepForm() {
   const [step, setStep] = useState(1);
@@ -14,6 +15,7 @@ export default function MultiStepForm() {
 
       {step === 1 && <Step1 onNext={next} />}
       {step === 2 && <Step2 onNext={next} onBack={prev} />}
+      {step === 3 && <Step3 onBack={prev} />}
     </div>
   );
 }
