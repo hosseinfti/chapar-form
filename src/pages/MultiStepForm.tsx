@@ -23,11 +23,7 @@ export default function MultiStepForm() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Multi-Step Form
-        </Typography>
-
+      <Paper elevation={3} sx={{ p: 4, height: "30em" }}>
         <Stepper activeStep={step} alternativeLabel sx={{ mb: 4 }}>
           {steps.map((label) => (
             <Step key={label}>
@@ -36,7 +32,7 @@ export default function MultiStepForm() {
           ))}
         </Stepper>
 
-        <Box>
+        <Box sx={{ height: "100%" }}>
           {step === 0 && <Step1 onNext={next} />}
           {step === 1 && <Step2 onNext={next} onBack={prev} />}
           {step === 2 && <Step3 onBack={prev} />}
