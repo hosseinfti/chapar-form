@@ -5,7 +5,7 @@ import * as yup from "yup";
 import dayjs from "dayjs";
 import { useFormStore } from "../../store/formStore";
 
-import { TextField, Grid, Button, Alert, FormHelperText } from "@mui/material";
+import { TextField, Grid, Button, Alert } from "@mui/material";
 
 type FormValues = {
   fullName: string;
@@ -22,8 +22,8 @@ const schema: yup.ObjectSchema<FormValues> = yup
       .string()
       .required("Full name is required")
       .min(3, "At least 3 characters"),
-    email: yup.string().email("Invalid email").notRequired(),
-    phone: yup.string().notRequired(),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    phone: yup.string().required("Phone is required"),
     birthday: yup
       .string()
       .required("Birthday is required")

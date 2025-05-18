@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { useFormStore } from "../../store/formStore";
-import {
-  Box,
-  Grid,
-  TextField,
-  Button,
-  Chip,
-  Typography,
-  Alert,
-} from "@mui/material";
+import { Box, Grid, TextField, Button, Chip } from "@mui/material";
 
 interface Step2Props {
   onNext: () => void;
@@ -51,9 +43,14 @@ export default function Step2({ onNext, onBack }: Step2Props) {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={(e) => e.preventDefault()}>
-      <Grid container spacing={3}>
-        <Grid size={12}>
+    <Box
+      sx={{ height: "100%" }}
+      component="form"
+      noValidate
+      onSubmit={(e) => e.preventDefault()}
+    >
+      <Grid sx={{ height: "100%" }} container spacing={3}>
+        <Grid sx={{ height: "100%" }} size={12}>
           <TextField
             label="Add a Skill"
             fullWidth
@@ -80,7 +77,6 @@ export default function Step2({ onNext, onBack }: Step2Props) {
                 bgcolor: "#f9f9f9",
               }}
             >
-              {" "}
               {skills.map((skill, index) => (
                 <Chip
                   key={index}
